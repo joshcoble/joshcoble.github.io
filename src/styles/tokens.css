@@ -1,0 +1,61 @@
+/*
+  Design tokens. One colour scale, one spacing scale, one type scale.
+  Contrast ratios are against --paper (#faf9f6).
+*/
+:root {
+  /* Colour */
+  --paper: #faf9f6;
+  --surface: #ffffff;
+  --ink: #1a1c1e; /* 16.2:1 */
+  --ink-2: #4b5159; /* 7.6:1, secondary text */
+  --rule: #d9dbde; /* hairlines and table rules */
+  --rule-strong: #80878f; /* 3.4:1, planned-hours outline, run line, tag borders */
+  --hover-wash: #ecedef;
+
+  /* The one accent: open item. In progress, deferred, placeholder. */
+  --accent: #8a4b00; /* 6.5:1 */
+  --accent-wash: #f6ead6; /* accent text on this: 5.7:1 */
+
+  /* Data colours, used only where GitHub's own pass/fail is shown */
+  --fail: #b42318; /* 6.2:1; white on it 6.6:1 */
+  --pass: #1f7a3a; /* 5.1:1; white on it 5.4:1 */
+
+  /* Type */
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  --t-xs: 0.8125rem; /* 13 */
+  --t-sm: 0.875rem; /* 14 */
+  --t-base: 1rem; /* 16 */
+  --t-md: 1.1875rem; /* 19 */
+  --t-lg: 1.4375rem; /* 23 */
+  --t-xl: 1.75rem; /* 28 */
+  --t-2xl: 2.125rem; /* 34 */
+
+  --lh-tight: 1.2;
+  --lh-body: 1.6;
+
+  /* Spacing (4px base) */
+  --s-1: 0.25rem; /* 4 */
+  --s-2: 0.5rem; /* 8 */
+  --s-3: 0.75rem; /* 12 */
+  --s-4: 1rem; /* 16 */
+  --s-5: 1.5rem; /* 24 */
+  --s-6: 2rem; /* 32 */
+  --s-7: 3rem; /* 48 */
+  --s-8: 4rem; /* 64 */
+  --s-9: 6rem; /* 96 */
+
+  /* Layout */
+  --measure: 68ch;
+  --page: 72rem;
+  --gutter: var(--s-4);
+  --radius: 2px;
+  --focus: 2px solid var(--ink);
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --gutter: var(--s-6);
+  }
+}

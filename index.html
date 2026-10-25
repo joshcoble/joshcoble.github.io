@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Joshua Coble · Professional learning portfolio</title>
+    <meta
+      name="description"
+      content="Register of my professional learning goals, with planned and delivered hours and the evidence for each. UTS 43030 Professional Practice in Computing."
+    />
+    <meta name="theme-color" content="#faf9f6" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      // Animations start from their first frame only when motion is allowed and
+      // the app has loaded. Without this class every figure shows its end state.
+      ;(function () {
+        var root = document.documentElement
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+        root.classList.add('motion-ok')
+        setTimeout(function () {
+          if (!window.__appReady) root.classList.remove('motion-ok')
+        }, 3000)
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"><!--app--></div>
+    <script type="module" src="/src/entry-client.tsx"></script>
+  </body>
+</html>
