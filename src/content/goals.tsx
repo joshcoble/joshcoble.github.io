@@ -1,5 +1,5 @@
 import { Placeholder } from '../components/Placeholder'
-import type { FutureGoal, Goal } from './types'
+import type { FutureGoal, Goal, SkillRating } from './types'
 
 // All site copy and facts live in this file. Fill the placeholders by replacing
 // each `null` or <Placeholder> with the real value; the README lists them all.
@@ -14,7 +14,7 @@ export const profile = {
   name: 'Joshua Coble',
   github: { label: 'github.com/joshcoble', href: GH },
   /** Set to e.g. { label: 'LinkedIn', href: 'https://…' } entries. Empty shows a placeholder. */
-  contact: [] as { label: string; href: string }[],
+  contact: [{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/joshycoble/' }] as { label: string; href: string }[],
   /** Set to '89.17' to show the WAM. null hides it. */
   wam: null as string | null,
   targetRoles: ['Senior IT Project Manager (Harvey Robinson)', 'Head of Supply Chain Technology (Latitude IT)'],
@@ -28,7 +28,7 @@ export const goals: Goal[] = [
     short: 'Indigenous ethics',
     status: { kind: 'complete', label: 'Complete' },
     plannedHours: 40,
-    deliveredHours: null,
+    deliveredHours: 40,
     evidence: [
       {
         title: 'CARE Principles mapping of the Saibai Island waste management proposal',
@@ -82,6 +82,16 @@ export const goals: Goal[] = [
         peoples. I wrote the mapping about that context specifically, not about Indigenous communities in general.
       </>,
     ],
+    diff: [
+      {
+        was: 'A standard council approach: 60 days of letters and posters, then fines',
+        now: 'Ask what monitoring and penalising households would mean in a community with strong traditions of collective decision-making',
+      },
+      {
+        was: 'Use the census figure of 340 residents',
+        now: 'Record both figures, and treat the community’s account as the one that needs answering',
+      },
+    ],
     outstanding: [],
   },
   {
@@ -91,7 +101,7 @@ export const goals: Goal[] = [
     short: 'Cyber governance',
     status: { kind: 'complete', label: 'Complete' },
     plannedHours: 45,
-    deliveredHours: null,
+    deliveredHours: 45,
     evidence: [
       {
         title: 'Essential Eight Maturity Model summary',
@@ -144,7 +154,7 @@ export const goals: Goal[] = [
     short: 'Git and CI/CD',
     status: { kind: 'complete', label: 'Complete' },
     plannedHours: 40,
-    deliveredHours: null,
+    deliveredHours: 40,
     evidence: [
       {
         title: 'Reviewing a pull request',
@@ -300,9 +310,9 @@ export const goals: Goal[] = [
     code: 'G4',
     title: 'Selecting and applying a project delivery methodology',
     short: 'Delivery methodology',
-    status: { kind: 'in-progress', label: 'In progress' },
+    status: { kind: 'complete', label: 'Complete' },
     plannedHours: 50,
-    deliveredHours: null,
+    deliveredHours: 50,
     evidence: [
       {
         title: 'Scrum.org Scrum Open assessment',
@@ -330,9 +340,16 @@ export const goals: Goal[] = [
       },
       {
         title: 'Project plan',
-        unfinished: 'In progress. This entry will link to the plan when it is finished.',
-        summary: 'A project plan in five parts, where I have to argue a choice of delivery approach for a specific project:',
+        summary: 'A project plan in five parts, where I argue a choice of delivery approach for a specific project:',
         parts: ['Project brief', 'Schedule', 'Risk register', 'Stakeholder map', 'Methodology justification'],
+        files: [
+          {
+            path: 'evidence/project-plan.pdf',
+            description:
+              'Plan to replace the warehouse management system at Northwind Freight, a fictional logistics company. It argues for a hybrid approach: PRINCE2-style stages and gates for the project, with Scrum inside the configuration stage.',
+            pages: 5,
+          },
+        ],
       },
     ],
     thinking: [
@@ -352,11 +369,89 @@ export const goals: Goal[] = [
         ceremonies.
       </>,
       <>
-        I still rate myself at SFIA level 1 for delivery methodology. Knowing a framework is not the same as applying
-        it, and the project plan is where I have to apply it.
+        In my Assessment Task 1 skills audit I rated myself at SFIA level 1 for delivery methodology, because I had
+        only taken part in delivery routines defined by others. The project plan is where I applied one: choosing a
+        hybrid approach for a specific project and setting out why the alternatives did not fit. The project is
+        fictional, so I have not yet applied a methodology to work I am accountable for.
       </>,
     ],
+    diff: [
+      {
+        was: 'The Sprint is the timebox; the events inside it are loosely scheduled meetings',
+        now: 'Each event has its own maximum length. A timebox is a limit, not a target',
+      },
+      {
+        was: 'Scrum replaces project managers',
+        now: 'A hybrid project still needs someone who owns the vendor contract, the budget, the risk register and the stage gates',
+      },
+    ],
     outstanding: [],
+  },
+]
+
+/**
+ * From my skills audit in Assessment Task 1 (the Professional Learning Plan). Levels are self-assessed on the
+ * SFIA scale at the start of the session. Reasons are condensed from the audit, with workplace systems and
+ * projects left out.
+ */
+export const skillsAudit: SkillRating[] = [
+  {
+    skill: 'Ethical practice, especially with Indigenous communities',
+    source: 'Required by UTS',
+    level: 2,
+    goal: 'goal-1',
+    why: 'I have applied ethical reasoning within work scoped and supervised by others. Following privacy obligations set by legislation and policy is different from exercising independent judgement over how ethical requirements are set on a project.',
+  },
+  {
+    skill: 'Foundational cybersecurity',
+    source: 'Required by UTS',
+    level: 2,
+    goal: 'goal-2',
+    why: 'I work inside security controls and procedures defined by others, under supervision. Assessing risk and selecting controls, which level 3 requires, is not yet part of my work.',
+  },
+  {
+    skill: 'Software development tools',
+    source: 'Required by UTS',
+    level: 3,
+    goal: 'goal-3',
+    why: 'I work autonomously on defined technical tasks and select my own methods within established standards, though I do not set those standards or direct the work of others.',
+  },
+  {
+    skill: 'Project delivery methodology (Agile, Waterfall, hybrid)',
+    source: 'Both job ads',
+    level: 1,
+    goal: 'goal-4',
+    why: 'My involvement has been observational and instruction-led. I had taken part in delivery routines defined entirely by others, and had not applied a methodology to work I am accountable for.',
+  },
+  {
+    skill: 'Vendor and contract management',
+    source: 'Both job ads',
+    level: 1,
+    why: 'My contribution has been carrying out tasks within an agreement negotiated and managed by others. Vendor selection, negotiation and performance management are outside my role.',
+  },
+  {
+    skill: 'Stakeholder engagement and executive communication',
+    source: 'Both job ads',
+    level: 2,
+    why: 'I engage with stakeholders routinely, but within an established process and at an operational level, rather than shaping communication for executive audiences or holding stakeholder relationships in my own right.',
+  },
+  {
+    skill: 'Enterprise applications and IT asset management',
+    source: 'Head of Supply Chain Technology ad',
+    level: 2,
+    why: 'I operate and maintain enterprise platforms configured by others and contribute to asset processes designed at program level, rather than administering or configuring a platform myself.',
+  },
+  {
+    skill: 'Team leadership',
+    source: 'Both job ads',
+    level: 2,
+    why: 'My leadership has been operational and shift-based, coordinating people against tasks and standards set by the organisation, rather than setting direction or being accountable.',
+  },
+  {
+    skill: 'Budget and financial management',
+    source: 'Both job ads',
+    level: 1,
+    why: 'My exposure has been observational only. I work within cost constraints set and monitored by others, and have held no accountability for forecasting, tracking or reporting spend.',
   },
 ]
 

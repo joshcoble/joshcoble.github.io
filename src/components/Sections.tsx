@@ -92,7 +92,7 @@ export function ReadingNote() {
         </p>
         <p>
           Every file opens directly from its entry, and the <a href="#evidence-index">evidence index</a> lists them all in
-          one place. Anything not yet finished is labelled and shown <span className="accent-sample">in this colour</span>.
+          one place.
         </p>
       </div>
     </section>

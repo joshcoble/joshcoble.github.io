@@ -63,7 +63,14 @@ export interface Goal {
   deliveredHours: number | null
   evidence: EvidenceItem[]
   thinking: ReactNode[]
+  /** Old assumption against what replaced it, drawn from the reflection. Shown as a diff above it. */
+  diff?: DiffLine[]
   outstanding: string[]
+}
+
+export interface DiffLine {
+  was: string
+  now: string
 }
 
 export interface FutureGoal {
@@ -82,4 +89,15 @@ export interface Run {
   /** ISO time in UTC, from the GitHub API */
   at: string
   url: string
+}
+
+export interface SkillRating {
+  skill: string
+  /** Where the skill comes from: UTS's required skills or the job ads */
+  source: string
+  /** SFIA level, 1 to 7 */
+  level: number
+  /** The goal in this session that worked on it, if any */
+  goal?: string
+  why: string
 }

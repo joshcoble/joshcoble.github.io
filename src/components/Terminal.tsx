@@ -3,7 +3,8 @@ import { animate, stagger } from 'motion/react'
 import { goals } from '../content/goals'
 import type { Goal } from '../content/types'
 import { branchColour, isMerged } from '../lib/branches'
-import { EASE_IN_OUT, EASE_OUT, useMotionOK } from '../lib/motion'
+import { EASE_IN_OUT, EASE_OUT, useHydrated, useMotionOK } from '../lib/motion'
+import { Shell } from './Shell'
 
 const COMMAND = 'git log --graph --oneline'
 
@@ -46,6 +47,7 @@ function lanePath(goal: Goal) {
 export function Terminal() {
   const ref = useRef<HTMLDivElement>(null)
   const motionOK = useMotionOK()
+  const hydrated = useHydrated()
   const [active, setActive] = useState<string | null>(null)
 
   useEffect(() => {
@@ -193,6 +195,7 @@ export function Terminal() {
           </li>
         </ol>
       </div>
+      {hydrated && <Shell />}
     </div>
   )
 }

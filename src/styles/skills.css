@@ -1,0 +1,200 @@
+/* ==========================================================================
+   Skills audit: each skill's SFIA level as a filled seven-step scale
+   ========================================================================== */
+
+.sfia-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-4);
+  margin: 0 0 var(--s-5);
+  padding: 0;
+  list-style: none;
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+
+.sfia-legend .num {
+  color: var(--text);
+}
+
+.skill-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-bottom: var(--s-5);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-3);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-sm);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.chip:hover {
+  background: var(--bg-raised);
+}
+
+.chip[aria-pressed='true'] {
+  border-color: var(--main);
+  background: color-mix(in srgb, var(--main) 16%, transparent);
+}
+
+.chip-count {
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+
+.skills-board {
+  --meter: 11.5rem;
+  max-width: 60rem;
+}
+
+.skills-head,
+.skill summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--meter) 9.5rem 2.5rem;
+  align-items: center;
+  column-gap: var(--s-5);
+}
+
+.skills-head {
+  padding-bottom: var(--s-2);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.skills-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.skill {
+  border-bottom: 1px solid var(--line);
+}
+
+.skill summary {
+  padding: var(--s-3) var(--s-2);
+  margin-inline: calc(-1 * var(--s-2));
+  cursor: pointer;
+  list-style: none;
+  border-radius: 2px;
+  transition: background 0.15s;
+}
+
+.skill summary::-webkit-details-marker {
+  display: none;
+}
+
+.skill summary:hover {
+  background: var(--bg-raised);
+}
+
+.skill-name {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+}
+
+.skill-source {
+  font-size: var(--t-xs);
+  font-weight: 400;
+  color: var(--text-2);
+}
+
+/* Seven cells, one per SFIA level; filled up to the skill's level */
+.sfia-meter {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+  height: 1.25rem;
+}
+
+.sfia-meter--head {
+  height: auto;
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  color: var(--text-2);
+  text-align: center;
+}
+
+.sfia-cell {
+  border-radius: 1px;
+  background: var(--line);
+  transform-origin: bottom;
+}
+
+.sfia-cell--on {
+  background: var(--main);
+}
+
+.sfia-cell--on:last-of-type,
+.sfia-cell--on:has(+ .sfia-cell:not(.sfia-cell--on)) {
+  border-radius: 1px 4px 4px 1px;
+}
+
+.skill-level {
+  font-size: var(--t-sm);
+  color: var(--text);
+}
+
+.skill-level-name {
+  color: var(--text-2);
+}
+
+.skill-goal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: var(--t-sm);
+  font-weight: 600;
+}
+
+.skill-why {
+  max-width: var(--measure);
+  padding: 0 0 var(--s-4);
+  color: var(--text-2);
+}
+
+.skill-why p + p {
+  margin-top: var(--s-2);
+}
+
+.skill-where {
+  font-size: var(--t-sm);
+}
+
+.motion-ok .skills-board:not([data-played]) .sfia-cell--on {
+  transform: scaleY(0);
+}
+
+@media (max-width: 48rem) {
+  .skills-head {
+    display: none;
+  }
+  .skill summary {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: var(--s-2);
+  }
+  .skill-name {
+    grid-column: 1 / -1;
+  }
+  .sfia-meter {
+    grid-column: 1 / -1;
+    width: min(100%, var(--meter));
+    height: 0.875rem;
+  }
+  .skill-level {
+    grid-column: 1;
+  }
+}

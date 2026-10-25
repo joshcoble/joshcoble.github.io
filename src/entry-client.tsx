@@ -9,6 +9,7 @@ import './styles/components.css'
 import './styles/graph.css'
 import './styles/chapter.css'
 import './styles/viewer.css'
+import './styles/skills.css'
 
 import { StrictMode } from 'react'
 import { createRoot, hydrateRoot } from 'react-dom/client'

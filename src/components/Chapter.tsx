@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { animate, m, useInView, useScroll, useTransform, type MotionValue } from 'motion/react'
+import { animate, m, stagger, useInView, useScroll, useTransform, type MotionValue } from 'motion/react'
 import { scrumAttempts } from '../content/goals'
-import type { EvidenceFile, EvidenceItem, Goal } from '../content/types'
+import type { DiffLine, EvidenceFile, EvidenceItem, Goal } from '../content/types'
 import { branchName, branchStyle, isMerged } from '../lib/branches'
 import { fileMeta, fileName } from '../lib/files'
 import { EASE_OUT, useHydrated, useMotionOK } from '../lib/motion'
@@ -209,6 +209,54 @@ function Commit({ item, index, total }: { item: EvidenceItem; index: number; tot
 
 /* ---------- The reflection, as the merge commit ---------- */
 
+/** Old assumptions as removed lines, what replaced them as added lines. The removals print first. */
+function ThinkingDiff({ lines }: { lines: DiffLine[] }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, amount: 0.5 })
+  const motionOK = useMotionOK()
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !inView || !motionOK) return
+    const was = el.querySelectorAll<HTMLElement>('.diff-line--was')
+    const now = el.querySelectorAll<HTMLElement>('.diff-line--now')
+    const run = async () => {
+      await animate(was, { opacity: [0, 1], x: [-10, 0] }, { duration: 0.35, delay: stagger(0.12), ease: EASE_OUT })
+      await animate(now, { opacity: [0, 1], x: [-10, 0] }, { duration: 0.35, delay: stagger(0.12, { startDelay: 0.15 }), ease: EASE_OUT })
+      el.dataset.played = ''
+    }
+    run()
+  }, [inView, motionOK])
+
+  return (
+    <div ref={ref} className="diff">
+      <p className="diff-head num" aria-hidden="true">
+        @@ before, after @@
+      </p>
+      <ul className="diff-pairs">
+        {lines.map((line) => (
+          <li key={line.was} className="diff-pair">
+            <del className="diff-line diff-line--was">
+              <span className="diff-sign" aria-hidden="true">
+                −
+              </span>
+              <span className="sr-only">I assumed: </span>
+              {line.was}
+            </del>
+            <ins className="diff-line diff-line--now">
+              <span className="diff-sign" aria-hidden="true">
+                +
+              </span>
+              <span className="sr-only">Now: </span>
+              {line.now}
+            </ins>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function Reflection({ goal }: { goal: Goal }) {
   const hydrated = useHydrated()
   const [open, setOpen] = useState(false)
@@ -225,6 +273,7 @@ function Reflection({ goal }: { goal: Goal }) {
       <h3 id={`${goal.id}-thinking`} className="merge-title">
         What changed in my thinking
       </h3>
+      {goal.diff && <ThinkingDiff lines={goal.diff} />}
       <div className="prose">
         <p>{first}</p>
         {rest.length > 0 && (

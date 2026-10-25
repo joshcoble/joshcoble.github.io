@@ -87,7 +87,7 @@ test('every evidence link resolves with the right content type', async ({ page, 
   const hrefs = await page.$$eval('a[href^="/evidence/"]', (links) => [
     ...new Set(links.map((a) => a.getAttribute('href')!)),
   ])
-  expect(hrefs.length).toBe(11)
+  expect(hrefs.length).toBe(12)
   const types: Record<string, string> = { pdf: 'application/pdf', png: 'image/png' }
   for (const href of hrefs) {
     const res = await request.get(href)
@@ -118,6 +118,10 @@ test('reduced motion shows every figure in its final state', async ({ browser })
   // Nothing pins, and the pipeline shows real results rather than a queue
   await expect(page.locator('#goal-3 .chapter-pin')).not.toHaveCSS('position', 'sticky')
   await expect(page.locator('.stage[data-result="failure"] .stage-label').first()).toBeVisible()
+  // The diff and the finale are drawn in full straight away
+  await expect(page.locator('#goal-1 .diff-line--now').first()).toHaveCSS('opacity', '1')
+  await expect(page.locator('.finale-head').first()).toHaveCSS('opacity', '1')
+  await expect(page.locator('.finale-lane').first()).not.toHaveCSS('stroke-dashoffset', '1px')
   await context.close()
 })
 
@@ -127,10 +131,97 @@ test('the page is complete without JavaScript', async ({ browser }) => {
   await page.goto('/')
   await expect(page.locator('h1')).toHaveText('Joshua Coble')
   await expect(page.locator('article.chapter')).toHaveCount(4)
-  await expect(page.locator('#evidence-index a[href^="/evidence/"]')).toHaveCount(11)
+  await expect(page.locator('#evidence-index a[href^="/evidence/"]')).toHaveCount(12)
   // Without JS the inline script never adds motion-ok, so no figure is left at its first frame.
   // Reflections are expanded and every stage shows its result
   await expect(page.locator('#goal-1 .merge-more p').first()).toBeVisible()
   await expect(page.locator('.stage-label').first()).toHaveText('Failed')
+  // The thinking diffs and the finale are in the HTML; the canvas and the shell need scripts, so neither is there
+  await expect(page.locator('#goal-4 .diff-line--was').first()).toBeVisible()
+  await expect(page.locator('.finale-summary')).toHaveText('All four goals merged into main.')
+  await expect(page.locator('canvas.network, #shell-input')).toHaveCount(0)
+  // Every skill is listed and its reasoning opens with no script
+  await expect(page.locator('#skills .skill')).toHaveCount(9)
+  await page.locator('#skills summary').first().click()
+  await expect(page.locator('#skills .skill-why').first()).toBeVisible()
   await context.close()
+})
+
+test('the screenshot viewer steps with the arrow keys and closes back to its thumbnail', async ({ page }) => {
+  await page.goto('/')
+  const thumb = page.locator('#goal-3 .thumb-link').first()
+  await thumb.focus()
+  await page.keyboard.press('Enter')
+  const dialog = page.locator('dialog[open]')
+  await expect(dialog).toBeVisible()
+  const image = dialog.locator('img').first()
+  const first = await image.getAttribute('src')
+  await page.keyboard.press('ArrowRight')
+  await expect(image).not.toHaveAttribute('src', first!)
+  await page.keyboard.press('ArrowLeft')
+  await expect(image).toHaveAttribute('src', first!)
+  await dialog.getByRole('button', { name: 'Close' }).press('Enter')
+  await expect(dialog).toHaveCount(0)
+  await expect(thumb).toBeFocused()
+})
+
+test('the skills audit filters by group and explains each level', async ({ page }) => {
+  await page.goto('/')
+  const skills = page.locator('#skills .skill')
+  await expect(skills).toHaveCount(9)
+  const goalsOnly = page.getByRole('button', { name: /Goals this session/ })
+  await goalsOnly.click()
+  await expect(goalsOnly).toHaveAttribute('aria-pressed', 'true')
+  await expect(skills).toHaveCount(4)
+  const methodology = skills.filter({ hasText: 'Project delivery methodology' })
+  await methodology.locator('summary').focus()
+  await page.keyboard.press('Enter')
+  await expect(methodology.getByText(/observational and instruction-led/)).toBeVisible()
+  await methodology.getByRole('link', { name: 'G4 Delivery methodology' }).click()
+  await expect(page).toHaveURL(/#goal-4$/)
+})
+
+test.describe('the hero shell', () => {
+  test('answers help, rejects unknown commands and recalls history', async ({ page }) => {
+    await page.goto('/')
+    const input = page.getByRole('textbox', { name: /Terminal command/ })
+    await input.fill('help')
+    await input.press('Enter')
+    const log = page.getByRole('log', { name: 'Terminal output' })
+    await expect(log).toContainText('jump to a goal')
+    await input.fill('rm -rf /')
+    await input.press('Enter')
+    await expect(log).toContainText('command not found: rm')
+    await input.press('ArrowUp')
+    await expect(input).toHaveValue('rm -rf /')
+    await input.press('ArrowUp')
+    await expect(input).toHaveValue('help')
+    await input.fill('clear')
+    await input.press('Enter')
+    await expect(log).toHaveCount(0)
+  })
+
+  test('open g3 jumps to the chapter and moves focus to its heading', async ({ page }) => {
+    await page.goto('/')
+    const input = page.getByRole('textbox', { name: /Terminal command/ })
+    await input.fill('open g3')
+    await input.press('Enter')
+    await expect(page).toHaveURL(/#goal-3$/)
+    const heading = page.locator('#goal-3 h2')
+    await expect(heading).toBeFocused()
+    await expect(heading).toBeInViewport()
+  })
+
+  test('evidence lists every file as a link', async ({ page }) => {
+    await page.goto('/')
+    const input = page.getByRole('textbox', { name: /Terminal command/ })
+    await input.fill('evidence')
+    await input.press('Enter')
+    await expect(page.getByRole('log').locator('a[href^="/evidence/"]')).toHaveCount(12)
+    const results = await new AxeBuilder({ page })
+      .include('.term')
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
+      .analyze()
+    expect(results.violations.map((v) => `${v.id}: ${v.help}`)).toEqual([])
+  })
 })

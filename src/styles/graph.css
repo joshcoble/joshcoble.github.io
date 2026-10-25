@@ -447,3 +447,252 @@
     display: none;
   }
 }
+
+/* ---------- Commit network behind the hero ---------- */
+
+.hero {
+  position: relative;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+}
+
+/* Spans the rail too, so nodes can gather onto main. Fades out at the bottom. */
+.network {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(-1 * var(--rail));
+  width: calc(100% + var(--rail) + var(--gutter));
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, #000 75%, transparent);
+  mask-image: linear-gradient(to bottom, #000 75%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .network {
+    animation: network-in 1.6s 0.4s both;
+  }
+}
+
+@keyframes network-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---------- The shell under the git log ---------- */
+
+.shell {
+  border-top: 1px solid var(--line);
+}
+
+.motion-ok .term:not([data-played]) .shell {
+  visibility: hidden;
+}
+
+.shell-log {
+  max-height: 17rem;
+  overflow-y: auto;
+  padding: var(--s-3) var(--s-4) 0;
+  color: var(--text-2);
+  overscroll-behavior: contain;
+}
+
+.shell-log:focus-visible {
+  outline-offset: -2px;
+}
+
+.shell-entry + .shell-entry {
+  margin-top: var(--s-3);
+}
+
+.shell-echo {
+  color: var(--text);
+}
+
+.shell-out {
+  margin-top: var(--s-1);
+}
+
+.shell-out p + p {
+  margin-top: var(--s-2);
+}
+
+.shell-help div {
+  display: grid;
+  grid-template-columns: 13ch minmax(0, 1fr);
+  gap: var(--s-3);
+}
+
+.shell-help dt {
+  color: var(--text);
+}
+
+.shell-help dd {
+  margin: 0;
+}
+
+.shell-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shell-goal {
+  color: var(--branch);
+  font-weight: 500;
+}
+
+.shell-dim {
+  color: var(--text-2);
+}
+
+.shell-form {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+  padding: var(--s-3) var(--s-4);
+}
+
+.shell-input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--s-1) 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  caret-color: var(--g3);
+  font: inherit;
+}
+
+.shell-input::placeholder {
+  color: var(--text-2);
+  opacity: 1;
+}
+
+.shell-input:focus-visible {
+  outline-color: var(--main);
+  outline-offset: 4px;
+}
+
+/* ---------- Finale: every branch merges into main ---------- */
+
+/* Shifted left so x = 11 in the SVG sits on the page's main line */
+.finale {
+  position: relative;
+  display: grid;
+  margin-left: calc(var(--main-x) - var(--rail) - 11px);
+  margin-top: var(--s-8);
+  padding-bottom: var(--s-7);
+}
+
+.finale > * {
+  grid-area: 1 / 1;
+}
+
+/* Main stops at the last commit */
+.finale::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: calc(var(--head-y) + 8px);
+  bottom: 0;
+  width: 6px;
+  background: var(--bg);
+}
+
+/* Branches arrive from above, so their tops fade in */
+.finale-graph {
+  overflow: visible;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 2.5rem);
+  mask-image: linear-gradient(to bottom, transparent, #000 2.5rem);
+}
+
+.finale-main {
+  stroke: var(--main);
+  stroke-width: 2;
+}
+
+.finale-lane {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3;
+}
+
+.finale-lane--open {
+  stroke-dasharray: 0.02 0.015;
+}
+
+.finale-label {
+  fill: currentColor;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.finale-merge {
+  fill: currentColor;
+  stroke: var(--bg);
+  stroke-width: 3;
+  transition: opacity 0.3s;
+}
+
+.finale-pulse {
+  fill: var(--text);
+  opacity: 0;
+  filter: drop-shadow(0 0 6px var(--main));
+}
+
+.finale-ring {
+  fill: none;
+  stroke: var(--main);
+  stroke-width: 2;
+  opacity: 0;
+}
+
+.finale-head-dot {
+  fill: var(--main);
+  stroke: var(--bg);
+  stroke-width: 3;
+}
+
+.finale-text {
+  position: relative;
+  z-index: 1;
+  padding-top: calc(var(--head-y) - 0.8rem);
+  padding-left: calc(10px + var(--s-6));
+}
+
+.finale-commit {
+  font-size: var(--t-sm);
+  color: var(--text-2);
+}
+
+.finale-summary {
+  margin-top: var(--s-2);
+  font-family: var(--font-display);
+  font-size: var(--t-xl);
+  font-weight: 750;
+  letter-spacing: -0.015em;
+}
+
+.finale-name {
+  margin-top: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--text-2);
+}
+
+.motion-ok .finale:not([data-merged]) .finale-lane {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.motion-ok .finale:not([data-merged]) .finale-merge,
+.motion-ok .finale:not([data-played]) .finale-head {
+  opacity: 0;
+}

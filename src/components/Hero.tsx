@@ -3,6 +3,7 @@ import { animate, stagger } from 'motion/react'
 import { contactPlaceholder, profile } from '../content/goals'
 import { EASE_OUT, useMotionOK } from '../lib/motion'
 import { OutLink } from './links'
+import { Network } from './Network'
 import { Terminal } from './Terminal'
 
 /** The name lands like a poster: each line rises out of its own mask, then the intro follows. */
@@ -23,14 +24,15 @@ export function Hero() {
 
   return (
     <header ref={ref} className="hero" id="top">
+      <Network />
       <div className="hero-inner">
         <p className="hero-kicker hero-after">
           <span className="commit-dot commit-dot--main" aria-hidden="true" />
-          Professional learning portfolio
+          <span>Professional learning portfolio</span>
           <span className="hero-kicker-sep" aria-hidden="true">
             /
           </span>
-          43030 Professional Practice in Computing
+          <span>43030 Professional Practice in Computing</span>
         </p>
 
         <h1 className="hero-name">

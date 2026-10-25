@@ -595,6 +595,70 @@
   padding-top: var(--s-4);
 }
 
+/* What changed, as a diff: removed assumption in red, what replaced it in green */
+.diff {
+  max-width: var(--measure);
+  margin-bottom: var(--s-5);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-sunken);
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  line-height: 1.5;
+}
+
+.diff-head {
+  padding: var(--s-2) var(--s-4);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+
+.diff-pairs {
+  margin: 0;
+  padding: var(--s-2) 0;
+  list-style: none;
+}
+
+.diff-pair + .diff-pair {
+  margin-top: var(--s-2);
+}
+
+.diff-line {
+  display: grid;
+  grid-template-columns: 2ch minmax(0, 1fr);
+  padding: var(--s-1) var(--s-4) var(--s-1) var(--s-3);
+  border-left: 3px solid transparent;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.diff-line--was {
+  border-left-color: var(--fail);
+  background: color-mix(in srgb, var(--fail) 10%, transparent);
+}
+
+.diff-line--now {
+  border-left-color: var(--pass);
+  background: color-mix(in srgb, var(--pass) 9%, transparent);
+}
+
+.diff-sign {
+  font-weight: 500;
+}
+
+.diff-line--was .diff-sign {
+  color: var(--fail);
+}
+
+.diff-line--now .diff-sign {
+  color: var(--pass);
+}
+
+.motion-ok .diff:not([data-played]) .diff-line {
+  opacity: 0;
+}
+
 /* No scripts: never collapsed */
 html:not(.js) .merge-more {
   height: auto !important;
