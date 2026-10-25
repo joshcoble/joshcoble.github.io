@@ -55,6 +55,8 @@ export interface Goal {
   id: string
   code: string
   title: string
+  /** For tight spaces: the terminal, the nav and the graph overview. Chapters use the full title. */
+  short: string
   status: Status
   plannedHours: number
   /** null renders as a placeholder until the figure is filled in. */

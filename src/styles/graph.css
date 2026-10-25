@@ -1,0 +1,449 @@
+/* ==========================================================================
+   The page as a git graph: main runs down the left, nav, hero and terminal
+   ========================================================================== */
+
+/* ---------- Page and the main branch ---------- */
+
+.page {
+  position: relative;
+  max-width: var(--page);
+  margin-inline: auto;
+  padding-left: var(--rail);
+  padding-right: var(--gutter);
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--main-x) - 1px);
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--main);
+  opacity: 0.5;
+}
+
+/* A commit sitting on main, placed from inside the content column */
+.commit-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--branch, var(--main));
+  box-shadow: 0 0 0 3px var(--bg);
+}
+
+.hero-kicker .commit-dot {
+  position: absolute;
+  left: calc(var(--main-x) - var(--rail) - 6px);
+  top: 0.35em;
+}
+
+/* ---------- Navigation ---------- */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  height: var(--nav-h);
+  padding-inline: var(--gutter);
+  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+
+.nav-home {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.nav-home .commit-dot {
+  width: 10px;
+  height: 10px;
+}
+
+.nav-branch {
+  color: var(--text-2);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-3);
+  font-size: var(--t-sm);
+  text-decoration: none;
+  border-radius: 2px;
+  box-shadow: inset 0 -2px 0 transparent;
+  transition:
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+  background: var(--bg-raised);
+  box-shadow: inset 0 -2px 0 var(--branch, var(--main));
+}
+
+/* The short goal label shows only where the nav has room */
+@media (max-width: 74.99rem) {
+  .nav-short {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
+.nav-swatch {
+  width: 8px;
+  height: 8px;
+  background: var(--branch);
+}
+
+@media (max-width: 40rem) {
+  .nav-name,
+  .nav-wide {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+  .nav-wide {
+    display: none;
+  }
+  .nav-link {
+    padding-inline: var(--s-2);
+  }
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  padding-block: var(--s-7) var(--s-8);
+}
+
+.hero-kicker {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-3);
+}
+
+.hero-kicker-sep {
+  color: var(--line-strong);
+}
+
+@media (max-width: 40rem) {
+  .hero-kicker {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hero-kicker-sep {
+    display: none;
+  }
+}
+
+.hero-name {
+  margin: var(--s-5) 0 var(--s-7);
+  font-family: var(--font-display);
+  font-size: var(--t-poster);
+  font-weight: 900;
+  font-stretch: 125%;
+  line-height: 0.84;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+  text-wrap: nowrap;
+}
+
+.hero-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.03em;
+}
+
+.hero-line > span {
+  display: inline-block;
+}
+
+@media (min-width: 64rem) {
+  .hero-line + .hero-line {
+    text-align: right;
+  }
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--s-7);
+}
+
+@media (min-width: 64rem) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: var(--s-8);
+    align-items: start;
+  }
+}
+
+.hero-intro {
+  max-width: 46ch;
+  font-size: var(--t-md);
+  line-height: 1.55;
+}
+
+.hero-facts {
+  display: grid;
+  gap: var(--s-4);
+  margin-top: var(--s-6);
+  font-size: var(--t-sm);
+}
+
+.hero-facts dd {
+  margin: var(--s-1) 0 0;
+}
+
+/* Entrance: hidden only while the reveal is pending (see index.html) */
+.motion-ok .hero-line > span {
+  transform: translateY(108%);
+}
+
+.motion-ok .hero-after {
+  opacity: 0;
+}
+
+/* ---------- Terminal ---------- */
+
+.term {
+  --row: 32px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg-sunken);
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  box-shadow: 0 40px 90px -50px #000;
+}
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding: var(--s-2) var(--s-4);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+
+.term-lights {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.term-lights i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--line);
+}
+
+.term-cmd {
+  padding: var(--s-4) var(--s-4) var(--s-2);
+  color: var(--text);
+}
+
+.term-prompt {
+  color: var(--text-2);
+}
+
+.term-caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.15em;
+  margin-left: 2px;
+  vertical-align: -0.2em;
+  background: var(--text);
+}
+
+/* Blinks three times after typing, then holds still. */
+@media (prefers-reduced-motion: no-preference) {
+  .term[data-typed] .term-caret {
+    animation: caret 1s steps(1) 3;
+  }
+}
+
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.term-out {
+  position: relative;
+  padding: var(--s-2) var(--s-4) var(--s-4);
+}
+
+.term-graph {
+  position: absolute;
+  top: var(--s-2);
+  left: var(--s-4);
+  overflow: visible;
+}
+
+.term-main {
+  stroke: var(--main);
+  stroke-width: 2;
+}
+
+.term-lane {
+  fill: none;
+  stroke-width: 2;
+  transition: opacity 0.2s;
+}
+
+.term-lane[data-open] {
+  stroke-dasharray: 4 4;
+}
+
+.term-dot {
+  fill: var(--branch);
+  stroke: var(--bg-sunken);
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.2s;
+}
+
+.term-dot[data-open] {
+  fill: var(--bg-sunken);
+  stroke: var(--branch);
+  stroke-width: 2;
+  stroke-dasharray: 3 2;
+}
+
+.term-dot--main {
+  fill: var(--main);
+}
+
+.term-rows {
+  margin: 0;
+  list-style: none;
+}
+
+.term-row {
+  display: flex;
+  align-items: center;
+  height: var(--row);
+  min-width: 0;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.term-row--main {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: var(--row);
+  color: var(--text-2);
+}
+
+.term-ref {
+  color: var(--main);
+  font-weight: 500;
+}
+
+.term-link {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  width: 100%;
+  min-width: 0;
+  height: 28px;
+  padding: 0 var(--s-2);
+  margin-left: calc(-1 * var(--s-2));
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.term-link:hover,
+.term-link:focus-visible {
+  background: color-mix(in srgb, var(--branch) 14%, transparent);
+}
+
+.term-code {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--branch);
+}
+
+.term-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: var(--font-sans);
+  color: var(--text);
+}
+
+.term-state {
+  flex: none;
+  padding: 0 0.5em;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-sans);
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+
+.term-state--open {
+  border-style: dashed;
+  border-color: var(--branch);
+  color: var(--text);
+}
+
+/* Hovering or focusing a goal lights its branch and dims the rest */
+.term[data-active='goal-1'] [data-goal]:not([data-goal='goal-1']),
+.term[data-active='goal-2'] [data-goal]:not([data-goal='goal-2']),
+.term[data-active='goal-3'] [data-goal]:not([data-goal='goal-3']),
+.term[data-active='goal-4'] [data-goal]:not([data-goal='goal-4']) {
+  opacity: 0.28;
+}
+
+.motion-ok .term:not([data-typed]) .term-char,
+.motion-ok .term:not([data-played]) .term-row {
+  opacity: 0;
+}
+
+.motion-ok .term:not([data-played]) .term-dot {
+  transform: scale(0);
+}
+
+@media (max-width: 40rem) {
+  .term {
+    margin-right: calc(-1 * var(--gutter) + var(--s-2));
+  }
+  .term-state {
+    display: none;
+  }
+}

@@ -8,13 +8,16 @@
       name="description"
       content="Register of my professional learning goals, with planned and delivered hours and the evidence for each. UTS 43030 Professional Practice in Computing."
     />
-    <meta name="theme-color" content="#faf9f6" />
+    <meta name="theme-color" content="#0d0f12" />
+    <meta name="color-scheme" content="dark" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <script>
-      // Animations start from their first frame only when motion is allowed and
-      // the app has loaded. Without this class every figure shows its end state.
+      // `js`: content that collapses is only collapsed when scripts run.
+      // `motion-ok`: animations start from their first frame only when motion is
+      // allowed and the app has loaded. Without it every figure shows its end state.
       ;(function () {
         var root = document.documentElement
+        root.classList.add('js')
         if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
         root.classList.add('motion-ok')
         setTimeout(function () {

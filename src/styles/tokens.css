@@ -1,26 +1,35 @@
 /*
-  Design tokens. One colour scale, one spacing scale, one type scale.
-  Contrast ratios are against --paper (#faf9f6).
+  Design tokens. Dark by default. One colour set, one spacing scale, one type scale.
+  Contrast ratios are against --bg (#0d0f12); all text colours pass WCAG AA.
 */
 :root {
-  /* Colour */
-  --paper: #faf9f6;
-  --surface: #ffffff;
-  --ink: #1a1c1e; /* 16.2:1 */
-  --ink-2: #4b5159; /* 7.6:1, secondary text */
-  --rule: #d9dbde; /* hairlines and table rules */
-  --rule-strong: #80878f; /* 3.4:1, planned-hours outline, run line, tag borders */
-  --hover-wash: #ecedef;
+  color-scheme: dark;
 
-  /* The one accent: open item. In progress, deferred, placeholder. */
-  --accent: #8a4b00; /* 6.5:1 */
-  --accent-wash: #f6ead6; /* accent text on this: 5.7:1 */
+  /* Surfaces */
+  --bg: #0d0f12;
+  --bg-raised: #161a1f;
+  --bg-sunken: #090a0c;
+  --line: #2a3037; /* hairlines, 1.4:1, decorative only */
+  --line-strong: #69727c; /* 3.9:1, graph lines and control borders */
 
-  /* Data colours, used only where GitHub's own pass/fail is shown */
-  --fail: #b42318; /* 6.2:1; white on it 6.6:1 */
-  --pass: #1f7a3a; /* 5.1:1; white on it 5.4:1 */
+  /* Text */
+  --text: #eceae4; /* 16.0:1 */
+  --text-2: #a4abb3; /* 8.3:1, secondary text */
+
+  /* The git graph. main is neutral; each goal is one branch colour, used for
+     everything that belongs to that goal. */
+  --main: #c9ced3; /* 12.1:1 */
+  --g1: #ff8a66; /* 8.3:1  coral */
+  --g2: #3fd8c6; /* 10.8:1 teal */
+  --g3: #ffc94d; /* 12.5:1 amber */
+  --g4: #b8a1ff; /* 8.8:1  violet */
+
+  /* GitHub's own pass and fail, used only in the Actions pipeline */
+  --fail: #ff6e6e; /* 7.0:1 */
+  --pass: #5fe08f; /* 11.5:1 */
 
   /* Type */
+  --font-display: 'Archivo Variable', 'Archivo', 'Arial Black', system-ui, sans-serif;
   --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
@@ -31,8 +40,11 @@
   --t-lg: 1.4375rem; /* 23 */
   --t-xl: 1.75rem; /* 28 */
   --t-2xl: 2.125rem; /* 34 */
+  --t-3xl: clamp(2.5rem, 4.5vw, 3.75rem);
+  --t-number: clamp(6rem, 17vw, 15rem); /* goal numbers and the hours figure */
+  --t-poster: clamp(2.5rem, min(15.4vw, 26vh), 15.5rem); /* the hero name; JOSHUA is 5.35em wide. The vh cap keeps the intro above the fold on short screens */
 
-  --lh-tight: 1.2;
+  --lh-tight: 1.15;
   --lh-body: 1.6;
 
   /* Spacing (4px base) */
@@ -46,16 +58,32 @@
   --s-8: 4rem; /* 64 */
   --s-9: 6rem; /* 96 */
 
-  /* Layout */
-  --measure: 68ch;
-  --page: 72rem;
+  /* Layout. The main branch runs down the page at --main-x. */
+  --measure: 66ch;
+  --page: 90rem;
   --gutter: var(--s-4);
-  --radius: 2px;
-  --focus: 2px solid var(--ink);
+  --rail: 2.75rem; /* space left of the content for main and the branch line */
+  --main-x: 0.75rem; /* main, measured from the page's left edge */
+  --branch-x: 1.875rem; /* a goal's branch line on narrow screens */
+  --nav-h: 3.5rem;
+  --radius: 3px;
+
+  /* Kept so the sections not yet restyled still read correctly on dark */
+  --paper: var(--bg);
+  --surface: var(--bg-raised);
+  --ink: var(--text);
+  --ink-2: var(--text-2);
+  --rule: var(--line);
+  --rule-strong: var(--line-strong);
+  --hover-wash: #1f242a;
+  --accent: var(--text);
+  --accent-wash: transparent;
 }
 
 @media (min-width: 48rem) {
   :root {
     --gutter: var(--s-6);
+    --rail: 4.5rem;
+    --main-x: 1.25rem;
   }
 }

@@ -87,7 +87,7 @@ test('every evidence link resolves with the right content type', async ({ page, 
   const hrefs = await page.$$eval('a[href^="/evidence/"]', (links) => [
     ...new Set(links.map((a) => a.getAttribute('href')!)),
   ])
-  expect(hrefs.length).toBe(10)
+  expect(hrefs.length).toBe(11)
   const types: Record<string, string> = { pdf: 'application/pdf', png: 'image/png' }
   for (const href of hrefs) {
     const res = await request.get(href)
@@ -100,7 +100,7 @@ test('every evidence link resolves with the right content type', async ({ page, 
 
 test('screenshot dialog opens, traps focus and returns it on Escape', async ({ page }) => {
   await page.goto('/')
-  const thumb = page.locator('#goal-3 .shot-link').first()
+  const thumb = page.locator('#goal-3 .thumb-link').first()
   await thumb.click()
   const dialog = page.locator('dialog[open]')
   await expect(dialog).toBeVisible()
@@ -115,8 +115,9 @@ test('reduced motion shows every figure in its final state', async ({ browser })
   const page = await context.newPage()
   await page.goto('/')
   await expect(page.locator('html')).not.toHaveClass(/motion-ok/)
-  const transforms = await page.$$eval('.runs-line, .run-fill', (els) => els.map((el) => getComputedStyle(el).transform))
-  expect(transforms.every((t) => t === 'none')).toBe(true)
+  // Nothing pins, and the pipeline shows real results rather than a queue
+  await expect(page.locator('#goal-3 .chapter-pin')).not.toHaveCSS('position', 'sticky')
+  await expect(page.locator('.stage[data-result="failure"] .stage-label').first()).toBeVisible()
   await context.close()
 })
 
@@ -125,10 +126,11 @@ test('the page is complete without JavaScript', async ({ browser }) => {
   const page = await context.newPage()
   await page.goto('/')
   await expect(page.locator('h1')).toHaveText('Joshua Coble')
-  await expect(page.locator('article.goal')).toHaveCount(4)
-  await expect(page.locator('#evidence-index a[href^="/evidence/"]')).toHaveCount(10)
+  await expect(page.locator('article.chapter')).toHaveCount(4)
+  await expect(page.locator('#evidence-index a[href^="/evidence/"]')).toHaveCount(11)
   // Without JS the inline script never adds motion-ok, so no figure is left at its first frame.
-  const transforms = await page.$$eval('.run-fill', (els) => els.map((el) => getComputedStyle(el).transform))
-  expect(transforms.every((t) => t === 'none')).toBe(true)
+  // Reflections are expanded and every stage shows its result
+  await expect(page.locator('#goal-1 .merge-more p').first()).toBeVisible()
+  await expect(page.locator('.stage-label').first()).toHaveText('Failed')
   await context.close()
 })

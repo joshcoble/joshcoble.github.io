@@ -25,7 +25,8 @@ export const goals: Goal[] = [
     id: 'goal-1',
     code: 'G1',
     title: 'Ethical practice with Indigenous communities',
-    status: { kind: 'unconfirmed', label: 'Status to confirm', note: 'Complete or partly complete' },
+    short: 'Indigenous ethics',
+    status: { kind: 'complete', label: 'Complete' },
     plannedHours: 40,
     deliveredHours: null,
     evidence: [
@@ -49,7 +50,14 @@ export const goals: Goal[] = [
       {
         title: 'AIATSIS ethical framework case study',
         summary: 'My case study on the AIATSIS ethical framework, submitted for this subject as Assessment Task 2.',
-        noFile: 'Submitted separately, so no file is published here.',
+        files: [
+          {
+            path: 'evidence/aiatsis-case-study.pdf',
+            description:
+              'An email to management recommending a design studio pause its AI-generated Indigenous imagery range. It applies the AIATSIS Code, Indigenous Cultural and Intellectual Property, and free, prior and informed consent to a commercial decision, and proposes partnering with Aboriginal and Torres Strait Islander artists instead.',
+            pages: 3,
+          },
+        ],
       },
     ],
     thinking: [
@@ -80,7 +88,8 @@ export const goals: Goal[] = [
     id: 'goal-2',
     code: 'G2',
     title: 'Foundations in cybersecurity governance',
-    status: { kind: 'partly', label: 'Partly complete', note: 'ISC2 Certified in Cybersecurity not done' },
+    short: 'Cyber governance',
+    status: { kind: 'complete', label: 'Complete' },
     plannedHours: 45,
     deliveredHours: null,
     evidence: [
@@ -126,13 +135,14 @@ export const goals: Goal[] = [
         gives each workflow job.
       </>,
     ],
-    outstanding: ['ISC2 Certified in Cybersecurity: not completed. Moved to future goals.'],
+    outstanding: [],
   },
   {
     id: 'goal-3',
     code: 'G3',
     title: 'Software development tools: collaborative Git and CI/CD',
-    status: { kind: 'complete', label: 'Complete', note: 'GitHub Foundations certification deferred' },
+    short: 'Git and CI/CD',
+    status: { kind: 'complete', label: 'Complete' },
     plannedHours: 40,
     deliveredHours: null,
     evidence: [
@@ -283,13 +293,14 @@ export const goals: Goal[] = [
         Essential Eight (<a href="#goal-2">Goal 2</a>).
       </>,
     ],
-    outstanding: ['GitHub Foundations certification: deferred. Moved to future goals.'],
+    outstanding: [],
   },
   {
     id: 'goal-4',
     code: 'G4',
     title: 'Selecting and applying a project delivery methodology',
-    status: { kind: 'in-progress', label: 'In progress', note: 'Project plan not finished' },
+    short: 'Delivery methodology',
+    status: { kind: 'in-progress', label: 'In progress' },
     plannedHours: 50,
     deliveredHours: null,
     evidence: [
@@ -345,7 +356,7 @@ export const goals: Goal[] = [
         it, and the project plan is where I have to apply it.
       </>,
     ],
-    outstanding: ['Project plan: in progress.', 'PRINCE2 Foundation: deferred. Moved to future goals.'],
+    outstanding: [],
   },
 ]
 
@@ -365,14 +376,14 @@ export const futureGoals: FutureGoal[] = [
     from: 'Goal 4',
     fromHref: '#goal-4',
   },
-  { name: 'PRINCE2 Foundation', note: 'Deferred from this session.', from: 'Goal 4', fromHref: '#goal-4' },
+  { name: 'PRINCE2 Foundation', note: 'Carried over from this session.', from: 'Goal 4', fromHref: '#goal-4' },
   {
     name: 'ISC2 Certified in Cybersecurity',
-    note: 'Not completed this session.',
+    note: 'Carried over from this session.',
     from: 'Goal 2',
     fromHref: '#goal-2',
   },
-  { name: 'GitHub Foundations', note: 'Certification deferred.', from: 'Goal 3', fromHref: '#goal-3' },
+  { name: 'GitHub Foundations', note: 'Carried over from this session.', from: 'Goal 3', fromHref: '#goal-3' },
   { name: 'ServiceNow Certified System Administrator' },
   { name: 'ITIL 4 Foundation' },
 ]

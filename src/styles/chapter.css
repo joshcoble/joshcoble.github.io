@@ -1,0 +1,846 @@
+/* ==========================================================================
+   Goal chapters: each goal is a branch off main
+   ========================================================================== */
+
+.chapter {
+  position: relative;
+  padding-block: var(--s-8);
+}
+
+/* ---------- Narrow screens: the branch runs down the left edge ---------- */
+
+/* Fork: out of main, across, and down onto the branch line */
+.chapter::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(var(--main-x) - var(--rail));
+  width: calc(var(--branch-x) - var(--main-x));
+  height: var(--s-7);
+  border: 3px solid var(--branch);
+  border-left: 0;
+  border-bottom: 0;
+  border-top-right-radius: var(--s-5);
+}
+
+/* Merge: down the branch and back into main */
+.chapter::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--main-x) - var(--rail));
+  width: calc(var(--branch-x) - var(--main-x));
+  height: var(--s-7);
+  border: 3px solid var(--branch);
+  border-left: 0;
+  border-top: 0;
+  border-bottom-right-radius: var(--s-5);
+}
+
+.chapter--open::after {
+  display: none;
+}
+
+.rail-line {
+  position: absolute;
+  top: var(--s-7);
+  bottom: var(--s-7);
+  left: calc(var(--branch-x) - var(--rail) - 1.5px);
+  width: 3px;
+  background: var(--branch);
+  transform-origin: top;
+}
+
+.chapter--open .rail-line {
+  bottom: 0;
+  background: repeating-linear-gradient(to bottom, var(--branch) 0 8px, transparent 8px 14px);
+}
+
+.pin-graph {
+  display: none;
+}
+
+/* ---------- Wide screens: the goal pins while its evidence scrolls past ---------- */
+
+@media (min-width: 64rem) {
+  .chapter {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--s-8);
+    padding-block: 0;
+  }
+
+  .chapter::before,
+  .chapter::after,
+  .rail-line {
+    display: none;
+  }
+
+  .chapter-pin {
+    position: sticky;
+    top: var(--nav-h);
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--s-5);
+    height: calc(100vh - var(--nav-h));
+    min-height: 34rem;
+    padding-block: var(--s-6);
+  }
+
+  .chapter-body {
+    padding-block: var(--s-9);
+  }
+
+  .pin-graph {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(-1 * var(--rail));
+    width: var(--rail);
+  }
+
+  .pin-graph svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+}
+
+/* Readers who ask for less motion get a static layout: nothing pins */
+@media (min-width: 64rem) and (prefers-reduced-motion: reduce) {
+  .chapter-pin {
+    position: relative;
+    height: auto;
+    justify-content: start;
+    padding-block: var(--s-9);
+  }
+}
+
+.pin-ghost,
+.pin-line {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+
+.pin-ghost {
+  stroke: var(--line);
+  stroke-width: 2;
+}
+
+.pin-line {
+  stroke: var(--branch);
+  stroke-width: 3;
+}
+
+.pin-line--open {
+  stroke-dasharray: 7 6;
+}
+
+.pin-dot {
+  position: absolute;
+  left: calc(52px - 8px);
+  width: 16px;
+  height: 16px;
+  translate: 0 -50%;
+  border: 2px solid var(--branch);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.pin-dot-fill {
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--branch);
+}
+
+.pin-end {
+  position: absolute;
+  bottom: var(--s-6);
+  left: calc(52px + var(--s-3));
+  font-family: var(--font-mono);
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  color: var(--branch);
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  white-space: nowrap;
+}
+
+.pin-end--merge {
+  left: calc(20px + var(--s-3));
+  bottom: var(--s-4);
+}
+
+/* ---------- The pinned panel ---------- */
+
+.chapter-number {
+  font-family: var(--font-display);
+  font-size: var(--t-number);
+  font-weight: 900;
+  font-stretch: 125%;
+  line-height: 0.78;
+  letter-spacing: -0.06em;
+  color: var(--branch);
+  margin-left: -0.04em;
+}
+
+.chapter-number-g {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--branch);
+}
+
+@media (min-width: 64rem) {
+  .chapter-number {
+    font-size: clamp(6rem, min(14vw, 24vh), 15rem);
+  }
+}
+
+.chapter-title {
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 2.7vw, 2.75rem);
+  font-weight: 750;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.chapter-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1) var(--s-3);
+  font-size: var(--t-sm);
+}
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--branch);
+}
+
+.status-dot--open {
+  background: transparent;
+  border: 2px dashed var(--branch);
+}
+
+.chapter-status-graph {
+  color: var(--text-2);
+}
+
+.chapter-status-graph::before {
+  content: '→ ';
+  color: var(--branch);
+}
+
+/* ---------- Hours ---------- */
+
+.hours {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  column-gap: var(--s-6);
+  row-gap: var(--s-3);
+  align-items: end;
+  margin-top: var(--s-2);
+}
+
+.hours-big {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 5.5vw, 5rem);
+  font-weight: 900;
+  font-stretch: 112%;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.hours-big--planned {
+  color: var(--text-2);
+}
+
+.hours-big--open {
+  display: flex;
+  align-items: flex-end;
+  min-height: 0.9em;
+  font-size: clamp(3rem, 5.5vw, 5rem);
+}
+
+.hours-big--open .placeholder {
+  font-size: var(--t-md);
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+.hours-unit {
+  margin-left: 0.08em;
+  font-family: var(--font-sans);
+  font-size: 0.3em;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-2);
+}
+
+.hours-track {
+  grid-column: 1 / -1;
+  position: relative;
+  display: block;
+  height: 6px;
+  background: var(--line);
+}
+
+.hours-fill {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  background: var(--branch);
+  transform-origin: left;
+}
+
+/* ---------- Open items: unfinished work and unfilled placeholders only ---------- */
+
+.placeholder,
+.open-item {
+  border: 1px dashed var(--text);
+  background: repeating-linear-gradient(135deg, transparent 0 6px, rgb(236 234 228 / 0.07) 6px 8px);
+  color: var(--text);
+}
+
+.placeholder {
+  padding: 0 0.4em;
+}
+
+.open-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2) var(--s-3);
+  max-width: var(--measure);
+  padding: var(--s-3) var(--s-4);
+}
+
+.open-item-label {
+  padding: 0.05em 0.5em;
+  background: var(--text);
+  color: var(--bg);
+  font-size: var(--t-sm);
+  font-weight: 600;
+}
+
+/* ---------- Evidence commits ---------- */
+
+.commits {
+  display: grid;
+  gap: var(--s-8);
+  padding: 0;
+  list-style: none;
+}
+
+.commit {
+  position: relative;
+  display: grid;
+  gap: var(--s-3);
+}
+
+/* On narrow screens each commit is a dot on the branch line */
+.commit::before {
+  content: '';
+  position: absolute;
+  top: 0.2rem;
+  left: calc(var(--branch-x) - var(--rail) - 8px);
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--branch);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+@media (min-width: 64rem) {
+  .commit::before {
+    display: none;
+  }
+}
+
+.commit .commit-meta {
+  color: var(--branch);
+}
+
+.commit-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 2vw, 1.875rem);
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+.commit-tag {
+  display: table;
+  margin-top: var(--s-2);
+  padding: 0.1em 0.55em;
+  border: 1px solid var(--line-strong);
+  font-family: var(--font-sans);
+  font-size: var(--t-sm);
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--text-2);
+}
+
+.commit-summary {
+  max-width: var(--measure);
+}
+
+.commit .parts {
+  display: grid;
+  gap: var(--s-1);
+  padding-left: var(--s-5);
+}
+
+.commit .parts li::marker {
+  color: var(--branch);
+}
+
+.commit .facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--s-1) var(--s-4);
+  font-size: var(--t-sm);
+}
+
+.commit .facts > div {
+  display: contents;
+}
+
+.commit .facts dt {
+  padding-top: 0.05em;
+}
+
+.commit .facts dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.commit .attempts {
+  justify-self: start;
+  border-collapse: collapse;
+}
+
+.commit .attempts th {
+  padding: var(--s-1) var(--s-6) var(--s-1) 0;
+  font-weight: 400;
+  text-align: left;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--line);
+}
+
+.commit .attempts td {
+  padding: var(--s-1) 0;
+  font-family: var(--font-display);
+  font-size: var(--t-2xl);
+  font-weight: 800;
+  color: var(--branch);
+  border-bottom: 1px solid var(--line);
+}
+
+.no-file {
+  font-size: var(--t-sm);
+  color: var(--text-2);
+}
+
+/* Files: each is a link row that lifts and glows in the branch colour */
+.files {
+  display: grid;
+  gap: var(--s-2);
+  padding: 0;
+  list-style: none;
+}
+
+.file {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-1) var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+  text-decoration: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    translate 0.2s;
+}
+
+.file-name {
+  font-family: var(--font-mono);
+  font-size: var(--t-sm);
+  overflow-wrap: anywhere;
+}
+
+.file-meta {
+  margin-left: auto;
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+
+@media (max-width: 40rem) {
+  .file-name {
+    flex-basis: 100%;
+  }
+  .file-meta {
+    margin-left: 0;
+  }
+}
+
+.file .out-arrow {
+  color: var(--branch);
+}
+
+.file:hover,
+.file:focus-visible,
+.thumb-link:hover,
+.thumb-link:focus-visible,
+.stage-link:hover,
+.stage-link:focus-visible {
+  border-color: var(--branch);
+  box-shadow:
+    0 0 0 1px var(--branch),
+    0 14px 40px -14px color-mix(in srgb, var(--branch) 55%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .file:hover,
+  .thumb-link:hover,
+  .stage-link:hover {
+    translate: 0 -2px;
+  }
+}
+
+/* Screenshots */
+.thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: var(--s-4);
+  align-items: start;
+}
+
+.thumb-link {
+  display: block;
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    translate 0.2s;
+}
+
+.thumb-link:focus-visible {
+  outline-offset: 4px;
+}
+
+.thumb-box {
+  display: block;
+  overflow: hidden;
+}
+
+.thumb-box img {
+  width: 100%;
+  height: 100%;
+}
+
+.thumb-caption {
+  margin-top: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+
+/* ---------- The reflection, as the merge commit ---------- */
+
+.merge {
+  position: relative;
+  margin-top: var(--s-8);
+  padding-top: var(--s-6);
+  border-top: 1px solid var(--line);
+}
+
+.merge-meta {
+  font-size: var(--t-xs);
+  letter-spacing: 0.06em;
+  color: var(--branch);
+}
+
+.merge-title {
+  margin-top: var(--s-2);
+  margin-bottom: var(--s-4);
+  font-family: var(--font-display);
+  font-size: var(--t-xl);
+  font-weight: 750;
+  letter-spacing: -0.015em;
+}
+
+.merge .prose {
+  max-width: var(--measure);
+  font-size: var(--t-md);
+  line-height: 1.55;
+}
+
+.merge-more {
+  overflow: hidden;
+}
+
+.merge-more > p {
+  padding-top: var(--s-4);
+}
+
+/* No scripts: never collapsed */
+html:not(.js) .merge-more {
+  height: auto !important;
+  opacity: 1 !important;
+}
+
+/* Buttons */
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  text-align: left;
+  gap: var(--s-2);
+  margin-top: var(--s-4);
+  padding: var(--s-2) var(--s-4);
+  border: 1px solid var(--line-strong);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: var(--t-sm);
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.toggle:hover,
+.toggle:focus-visible {
+  border-color: var(--branch, var(--text));
+  background: color-mix(in srgb, var(--branch, var(--text)) 14%, transparent);
+}
+
+.toggle:disabled {
+  cursor: default;
+  color: var(--text-2);
+  border-color: var(--line);
+  background: transparent;
+}
+
+.toggle-sign {
+  width: 1ch;
+  color: var(--branch, var(--text));
+}
+
+.toggle kbd {
+  padding: 0 0.35em;
+  border: 1px solid var(--line-strong);
+  font-size: var(--t-xs);
+  color: var(--text-2);
+}
+
+/* ==========================================================================
+   The Actions pipeline
+   ========================================================================== */
+
+.pipeline {
+  margin-block: var(--s-2);
+  padding: var(--s-4);
+  border: 1px solid var(--line);
+  background: var(--bg-sunken);
+}
+
+.pipeline-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.pipeline-name {
+  font-size: var(--t-sm);
+  color: var(--text-2);
+}
+
+.pipeline-replay {
+  margin-top: 0;
+}
+
+.stages {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-4);
+  margin-top: var(--s-4);
+  padding: 0;
+  list-style: none;
+}
+
+.stage {
+  position: relative;
+}
+
+.stage-wire {
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  width: var(--s-4);
+  height: 2px;
+  background: var(--line-strong);
+}
+
+.stage-link {
+  display: grid;
+  gap: var(--s-2);
+  height: 100%;
+  padding: var(--s-3);
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  text-decoration: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    translate 0.2s;
+}
+
+.stage-top {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--text-2);
+}
+
+.stage-top time {
+  font-size: var(--t-xs);
+}
+
+.stage-run {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.stage-status {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-weight: 600;
+}
+
+.stage-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.stage-event {
+  font-size: var(--t-sm);
+  color: var(--text-2);
+}
+
+.stage-event code {
+  font-size: var(--t-xs);
+}
+
+.stage[data-state='queued'] .stage-status {
+  color: var(--text-2);
+}
+
+.stage[data-state='queued'] .stage-icon {
+  border-style: dashed;
+}
+
+.stage[data-state='running'] .stage-status {
+  color: var(--branch);
+}
+
+.stage[data-state='running'] .stage-icon {
+  border-right-color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .stage[data-state='running'] .stage-icon {
+    animation: spin 0.45s linear;
+  }
+}
+
+@keyframes spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+.stage[data-state='failure'] .stage-status {
+  color: var(--fail);
+}
+
+.stage[data-state='success'] .stage-status {
+  color: var(--pass);
+}
+
+.stage[data-state='failure'] .stage-icon,
+.stage[data-state='success'] .stage-icon {
+  background: currentColor;
+}
+
+.stage[data-state='failure'] .stage-icon svg,
+.stage[data-state='success'] .stage-icon svg {
+  color: var(--bg);
+}
+
+.stage[data-state='failure'] .stage-link {
+  border-color: color-mix(in srgb, var(--fail) 55%, var(--line));
+}
+
+.stage[data-state='success'] .stage-link {
+  border-color: color-mix(in srgb, var(--pass) 55%, var(--line));
+}
+
+/* Before the first play, every stage waits in the queue */
+.motion-ok .pipeline[data-phase='idle'] .stage-status {
+  color: var(--text-2);
+}
+
+.motion-ok .pipeline[data-phase='idle'] .stage-icon {
+  border-style: dashed;
+  background: transparent;
+}
+
+.motion-ok .pipeline[data-phase='idle'] .stage-icon svg,
+.motion-ok .pipeline[data-phase='idle'] .stage-label {
+  visibility: hidden;
+}
+
+.pipeline figcaption {
+  max-width: var(--measure);
+  margin-top: var(--s-4);
+  font-size: var(--t-sm);
+  color: var(--text-2);
+}
+
+@media (max-width: 48rem) {
+  .stages {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stage-wire {
+    top: auto;
+    bottom: 100%;
+    right: auto;
+    left: var(--s-5);
+    width: 2px;
+    height: var(--s-4);
+  }
+}

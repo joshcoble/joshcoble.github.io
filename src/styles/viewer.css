@@ -1,0 +1,84 @@
+/* Full-screen screenshot viewer */
+
+.viewer {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(9 10 12 / 0.95);
+  color: var(--text);
+}
+
+.viewer::backdrop {
+  background: transparent;
+}
+
+.viewer-frame {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+}
+
+.viewer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3) var(--s-5);
+  padding: var(--s-3) var(--gutter);
+  border-bottom: 1px solid var(--line);
+}
+
+.viewer-count {
+  font-size: var(--t-sm);
+  color: var(--text-2);
+}
+
+.viewer-goal {
+  color: var(--branch);
+  font-weight: 500;
+}
+
+.viewer-title {
+  flex: 1 1 18rem;
+  font-weight: 600;
+}
+
+.viewer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.viewer-actions .toggle {
+  margin-top: 0;
+}
+
+.viewer-open {
+  margin-right: var(--s-2);
+  font-size: var(--t-sm);
+}
+
+.viewer-stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: var(--s-5) var(--gutter);
+  overflow: hidden;
+}
+
+.viewer-img {
+  /* Sized from the known aspect ratio, not the file, so the shared-element
+     transition has a real target before the full PNG has loaded. The
+     thumbnail sits underneath until then. */
+  width: min(100%, calc((100dvh - 9rem) * var(--ar-n)));
+  height: auto;
+  aspect-ratio: var(--ar);
+  background-size: cover;
+  border: 1px solid var(--line);
+  box-shadow: 0 40px 120px -40px #000;
+}

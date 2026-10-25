@@ -53,7 +53,7 @@ export function evidence(): Plugin {
     },
     writeBundle() {
       if (config.build.ssr) return
-      const out = path.join(config.root, config.build.outDir, DIR)
+      const out = path.resolve(config.root, config.build.outDir, DIR)
       fs.mkdirSync(out, { recursive: true })
       for (const { name } of listEvidence(config.root)) {
         fs.copyFileSync(path.join(config.root, DIR, name), path.join(out, name))
