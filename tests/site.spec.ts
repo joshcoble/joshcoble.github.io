@@ -122,6 +122,11 @@ test('reduced motion shows every figure in its final state', async ({ browser })
   await expect(page.locator('#goal-1 .diff-line--now').first()).toHaveCSS('opacity', '1')
   await expect(page.locator('.finale-head').first()).toHaveCSS('opacity', '1')
   await expect(page.locator('.finale-lane').first()).not.toHaveCSS('stroke-dashoffset', '1px')
+  // Filtering swaps rows at once, and the nav still tracks the reader
+  await page.locator('#evidence-index').getByRole('button', { name: /G1/ }).click()
+  await expect(page.locator('#evidence-index tbody tr')).toHaveCount(2)
+  await page.locator('#goal-4 .commit').first().scrollIntoViewIfNeeded()
+  await expect(page.locator('.nav-head')).toContainText('G4')
   await context.close()
 })
 
@@ -140,6 +145,9 @@ test('the page is complete without JavaScript', async ({ browser }) => {
   await expect(page.locator('#goal-4 .diff-line--was').first()).toBeVisible()
   await expect(page.locator('.finale-summary')).toHaveText('All four goals merged into main.')
   await expect(page.locator('canvas.network, #shell-input')).toHaveCount(0)
+  // No menu button or filters; the nav links stay in the bar, and the index lists every file
+  await expect(page.locator('.nav-menu-button, #evidence-index .chip')).toHaveCount(0)
+  await expect(page.locator('#evidence-index tbody tr')).toHaveCount(12)
   // Every skill is listed and its reasoning opens with no script
   await expect(page.locator('#skills .skill')).toHaveCount(9)
   await page.locator('#skills summary').first().click()
@@ -179,6 +187,67 @@ test('the skills audit filters by group and explains each level', async ({ page 
   await expect(methodology.getByText(/observational and instruction-led/)).toBeVisible()
   await methodology.getByRole('link', { name: 'G4 Delivery methodology' }).click()
   await expect(page).toHaveURL(/#goal-4$/)
+})
+
+test.describe('the nav', () => {
+  test('shows HEAD on the goal in view, and compacts after the hero', async ({ page }) => {
+    await page.goto('/')
+    const head = page.locator('.nav-head')
+    const nav = page.locator('nav.nav')
+    await expect(head).toHaveText(/HEAD\s*→\s*main/)
+    const tall = (await nav.boundingBox())!.height
+    await page.locator('#goal-3 .commit').first().scrollIntoViewIfNeeded()
+    await expect(head).toHaveText(/HEAD\s*→\s*G3 · Git and CI\/CD/)
+    await expect(page.locator('.nav-links a[href="#goal-3"]')).toHaveAttribute('aria-current', 'location')
+    await expect(nav).toHaveAttribute('data-compact', '')
+    await expect.poll(async () => (await nav.boundingBox())!.height).toBeLessThan(tall)
+    await expect(page.locator('.nav-progress')).toHaveCount(1)
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }))
+    await expect(head).toHaveText(/HEAD\s*→\s*main/)
+  })
+
+  test.describe('on a phone', () => {
+    test.use({ viewport: { width: 375, height: 800 } })
+
+    test('opens a bottom sheet that keeps focus and closes on Escape', async ({ page }) => {
+      await page.goto('/')
+      await expect(page.locator('.nav-links')).toBeHidden()
+      const menu = page.getByRole('button', { name: 'Menu' })
+      await menu.click()
+      const sheet = page.getByRole('dialog', { name: 'Sections' })
+      await expect(sheet).toBeVisible()
+      await expect(menu).toHaveAttribute('aria-expanded', 'true')
+      for (let i = 0; i < 14; i++) {
+        await page.keyboard.press('Tab')
+        expect(await page.evaluate(() => document.activeElement?.closest('dialog') !== null)).toBe(true)
+      }
+      await page.keyboard.press('Escape')
+      await expect(sheet).toBeHidden()
+      await expect(menu).toBeFocused()
+      await expect(menu).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    test('a sheet link closes the sheet and jumps to its section', async ({ page }) => {
+      await page.goto('/')
+      await page.getByRole('button', { name: 'Menu' }).click()
+      await page.getByRole('dialog').getByRole('link', { name: /G2 Cyber governance/ }).click()
+      await expect(page.getByRole('dialog')).toBeHidden()
+      await expect(page).toHaveURL(/#goal-2$/)
+    })
+  })
+})
+
+test('evidence index filters by goal and announces the count', async ({ page }) => {
+  await page.goto('/')
+  const rows = page.locator('#evidence-index tbody tr')
+  await expect(rows).toHaveCount(12)
+  const g3 = page.locator('#evidence-index').getByRole('button', { name: /G3/ })
+  await g3.click()
+  await expect(g3).toHaveAttribute('aria-pressed', 'true')
+  await expect(rows).toHaveCount(6)
+  await expect(page.locator('#evidence-index [role="status"]')).toHaveText('6 of 12 files, from G3 Git and CI/CD')
+  await page.locator('#evidence-index').getByRole('button', { name: /^All/ }).click()
+  await expect(rows).toHaveCount(12)
 })
 
 test.describe('the hero shell', () => {

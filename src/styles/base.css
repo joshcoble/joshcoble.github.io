@@ -119,7 +119,6 @@ a:focus-visible {
 /* Small labels: sentence case, sans, secondary colour. Used for every eyebrow and field label. */
 .hero-kicker,
 .hero-facts dt,
-.hours-label,
 .commit .facts dt,
 .commit-meta {
   font-family: var(--font-sans);

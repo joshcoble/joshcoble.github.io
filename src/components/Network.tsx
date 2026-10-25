@@ -1,9 +1,10 @@
 import { useEffect, useRef } from 'react'
 import { useHydrated, useMotionOK } from '../lib/motion'
 
-// A web of commits in the four branch colours behind the hero. It drifts, moves
-// out of the way of the pointer, and as the reader scrolls past the hero every
-// node slides onto the main line, so the background becomes the page's graph.
+// A web of commits in the four branch colours behind the hero. It drifts and
+// moves out of the way of the pointer. Each node sits at one of three depths:
+// on scroll, distant nodes trail behind near ones, so the web reads as layered
+// space, and it fades out as the hero leaves.
 // Decorative only: the canvas is hidden from assistive technology.
 
 const BRANCH_VARS = ['--g1', '--g2', '--g3', '--g4']
@@ -11,6 +12,8 @@ const DRIFT_FOR = 9000 // ms of drifting after the last pointer move or load, th
 const SETTLE = 1600 // ms over which the drift slows to a stop
 const PUSH_RADIUS = 150
 const LINK = 150
+const DEPTHS = [0.35, 0.65, 1] // 1 moves with the page; lower values lag behind it
+const LAG = 0.55 // how far the most distant layer trails, as a share of the scroll
 
 interface Node {
   hx: number // home position, 0 to 1 across the canvas
@@ -23,6 +26,7 @@ interface Node {
   speed: number
   colour: number
   r: number
+  z: number
 }
 
 const clamp = (v: number, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v))
@@ -37,15 +41,13 @@ export function Network() {
     const canvas = ref.current
     const ctx = canvas?.getContext('2d')
     const hero = canvas?.parentElement
-    const page = hero?.closest<HTMLElement>('.page')
-    if (!canvas || !ctx || !hero || !page) return
+    if (!canvas || !ctx || !hero) return
 
     const css = getComputedStyle(document.documentElement)
     const colours = BRANCH_VARS.map((v) => css.getPropertyValue(v).trim())
 
     let w = 0
     let h = 0
-    let mainX = 0
     let nodes: Node[] = []
     let clock = 0 // drift time; only advances while awake, so settling freezes nodes where they are
     let last = 0
@@ -66,46 +68,41 @@ export function Network() {
       canvas!.width = Math.round(w * dpr)
       canvas!.height = Math.round(h * dpr)
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
-      // The main line is the page's ::before, 2px wide
-      const lineLeft = parseFloat(getComputedStyle(page!, '::before').left) || 0
-      mainX = page!.getBoundingClientRect().left + lineLeft + 1 - rect.left
 
       const count = Math.round(clamp((w * h) / 24000, 20, 58))
       if (nodes.length === count) return
       seed = 20261025
-      nodes = Array.from({ length: count }, (_, i) => ({
-        hx: 0.04 + rand() * 0.94,
-        hy: 0.04 + rand() * 0.9,
-        dx: 0,
-        dy: 0,
-        vx: 0,
-        vy: 0,
-        phase: rand() * Math.PI * 2,
-        speed: 0.5 + rand() * 0.7,
-        colour: i % colours.length,
-        r: rand() < 0.2 ? 3.5 : 2.2,
-      }))
-    }
-
-    /** 0 while the hero is in place, 1 once it has scrolled most of the way out. */
-    function gather() {
-      const rect = hero!.getBoundingClientRect()
-      return smooth(clamp(-rect.top / (rect.height * 0.7)))
+      nodes = Array.from({ length: count }, (_, i) => {
+        const z = DEPTHS[Math.floor(rand() * DEPTHS.length)]
+        return {
+          hx: 0.04 + rand() * 0.94,
+          hy: 0.04 + rand() * 0.9,
+          dx: 0,
+          dy: 0,
+          vx: 0,
+          vy: 0,
+          phase: rand() * Math.PI * 2,
+          speed: 0.5 + rand() * 0.7,
+          colour: i % colours.length,
+          r: (rand() < 0.2 ? 3.6 : 2.3) * (0.55 + 0.45 * z),
+          z,
+        }
+      })
     }
 
     function draw(energy: number, dt: number) {
-      const g = gather()
+      const scrolled = Math.max(0, -hero!.getBoundingClientRect().top)
       ctx!.clearRect(0, 0, w, h)
-      // Fade out as the nodes reach main, so they hand over to the real line
-      const alpha = 1 - smooth(clamp((g - 0.75) / 0.25))
+      const alpha = 1 - smooth(clamp(scrolled / (h * 0.75)))
       if (alpha <= 0) return false
 
       let moving = false
       const pts = nodes.map((n) => {
         // Pointer: push away, then spring back home
+        const lag = scrolled * (1 - n.z) * LAG
         if (pointer && energy > 0) {
           const px = n.hx * w + n.dx - pointer.x
-          const py = n.hy * h + n.dy - pointer.y
+          const py = n.hy * h + n.dy + lag - pointer.y
           const d = Math.hypot(px, py)
           if (d < PUSH_RADIUS && d > 0.01) {
             const f = (1 - d / PUSH_RADIUS) ** 2 * 1.4
@@ -122,8 +119,8 @@ export function Network() {
 
         const t = clock * 0.00035 * n.speed + n.phase
         const x = n.hx * w + Math.sin(t) * 22 + n.dx
-        const y = n.hy * h + Math.cos(t * 0.8) * 16 + n.dy
-        return { x: x + (mainX - x) * g, y, n }
+        const y = n.hy * h + Math.cos(t * 0.8) * 16 + n.dy + lag
+        return { x, y, n }
       })
 
       ctx!.lineWidth = 1
@@ -133,7 +130,8 @@ export function Network() {
           const b = pts[j]
           const d = Math.hypot(a.x - b.x, a.y - b.y)
           if (d > LINK) continue
-          ctx!.globalAlpha = (1 - d / LINK) * 0.26 * alpha
+          // Links between near nodes are stronger than links into the distance
+          ctx!.globalAlpha = (1 - d / LINK) * 0.26 * Math.min(a.n.z, b.n.z) * alpha
           ctx!.strokeStyle = colours[a.n.colour]
           ctx!.beginPath()
           ctx!.moveTo(a.x, a.y)
@@ -142,7 +140,7 @@ export function Network() {
         }
       }
       for (const p of pts) {
-        ctx!.globalAlpha = 0.7 * alpha
+        ctx!.globalAlpha = 0.75 * (0.4 + 0.6 * p.n.z) * alpha
         ctx!.fillStyle = colours[p.n.colour]
         ctx!.beginPath()
         ctx!.arc(p.x, p.y, p.n.r, 0, Math.PI * 2)

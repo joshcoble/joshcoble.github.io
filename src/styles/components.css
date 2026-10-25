@@ -84,7 +84,7 @@
   position: absolute;
   left: var(--gutter);
   top: calc(-1 * var(--s-8));
-  z-index: 10;
+  z-index: 40; /* above the fixed nav */
   padding: var(--s-2) var(--s-4);
   background: var(--ink);
   color: var(--paper);
@@ -162,59 +162,6 @@
   line-height: 1.35;
 }
 
-.register-hours {
-  width: 13rem;
-}
-
-.register tfoot th,
-.register tfoot td {
-  border-bottom: 0;
-  border-top: 1px solid var(--ink);
-  font-weight: 600;
-}
-
-/* ---------- Hours ---------- */
-
-.hours-figs {
-  display: inline-flex;
-  flex-wrap: wrap;
-  gap: 0 var(--s-3);
-  font-size: var(--t-sm);
-}
-
-.hours-figs b {
-  font-family: var(--font-mono);
-  font-weight: 500;
-}
-
-.hours-bar {
-  position: relative;
-  display: block;
-  height: 0.625rem;
-  margin-top: var(--s-2);
-}
-
-.hours-planned,
-.hours-done {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-}
-
-.hours-planned {
-  border: 1px solid var(--rule-strong);
-  background: var(--surface);
-}
-
-.hours-done {
-  background: var(--ink);
-  transform-origin: left center;
-}
-
-.motion-ok .hours-bar:not([data-played]) .hours-done {
-  transform: scaleX(0);
-}
-
 /* ---------- Footer ---------- */
 
 .site-footer {
@@ -235,16 +182,7 @@
     padding-block: var(--s-6);
   }
 
-  .register-hours {
-    width: auto;
-    min-width: 7.5rem;
-  }
-
   .register .col-evidence {
     display: none;
-  }
-
-  .hours-figs {
-    flex-direction: column;
   }
 }

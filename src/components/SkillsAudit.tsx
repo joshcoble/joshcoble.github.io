@@ -114,7 +114,7 @@ export function SkillsAudit() {
       </ol>
 
       {hydrated && (
-        <div className="skill-filters" role="group" aria-label="Show skills">
+        <div className="filters" role="group" aria-label="Show skills">
           {FILTERS.map((f) => (
             <button
               key={f.key}

@@ -2,7 +2,7 @@
 
 Professional learning portfolio for Joshua Coble, Bachelor of Computing Science (Business Information Systems Management), University of Technology Sydney.
 
-The site is a register of the four goals in my Professional Learning Plan for 43030 Professional Practice in Computing, Assessment Task 3. Each goal has its status, planned and delivered hours, evidence files, and what changed in my thinking. Every evidence file is linked directly and is at most two clicks from the top of the page.
+The site is a register of the four goals in my Professional Learning Plan for 43030 Professional Practice in Computing, Assessment Task 3. Each goal has its status, evidence files, and what changed in my thinking. Every evidence file is linked directly and is at most two clicks from the top of the page.
 
 Live site: https://joshcoble.github.io
 
@@ -10,8 +10,10 @@ Live site: https://joshcoble.github.io
 
 - **Vite, React and TypeScript.** React renders the page to static HTML at build time (`scripts/prerender.mjs`), so the page reads in full without JavaScript. In the browser, React then hydrates it for the animations, the screenshot viewer and the hero shell.
 - **The page is a git graph.** Main runs down the left edge. Each goal is a branch that forks off main, carries one commit per piece of evidence, and merges back when the goal is complete. The footer (`Finale.tsx`) merges every branch into main.
-- **Motion** (`motion/react`) runs the animations: the hero reveal, the `git log` terminal, the scroll-drawn branches, the hours count-up, the thinking diffs, the Actions pipeline replay, the viewer transition and the finale. Its larger feature set loads after first paint. Readers who prefer reduced motion, and anyone without JavaScript, see every figure in its final state.
+- **Motion** (`motion/react`) runs the animations: the hero reveal, the `git log` terminal, the scroll-drawn branches, the thinking diffs, the Actions pipeline replay, the viewer transition and the finale. Its larger feature set loads after first paint. Readers who prefer reduced motion, and anyone without JavaScript, see every figure in its final state.
 - **Commit network** (`Network.tsx`): a 2D canvas behind the hero. It drifts for a few seconds after load or after the pointer moves, then settles; as the hero scrolls away, every node slides onto main. With reduced motion it is one still frame.
+- **Nav** (`Nav.tsx`): shows `HEAD → main`, or `HEAD → G3 · Git and CI/CD` in that branch's colour while its chapter is on screen, with a scroll progress line along its bottom edge. It is full height at the top and compacts after the hero. Below 768 px its links move into a bottom sheet (a modal dialog, so focus stays inside and Escape closes it). Without JavaScript the links stay in the bar.
+- **Evidence index**: chips filter the files by goal, the rows reflow with a Motion layout animation, and the count is announced to screen readers.
 - **Hero shell** (`Shell.tsx`): type `help`, `whoami`, `ls`, `open g3`, `evidence` or `clear`. Everything it reaches is also linked from the page.
 - **Archivo, IBM Plex Sans and IBM Plex Mono**, self-hosted through Fontsource.
 - **No other runtime dependencies.** First-load JavaScript is about 123 KB gzipped, plus 19 KB for Motion's features once the page has loaded.
@@ -62,6 +64,8 @@ The first time you run the tests, install the browser with `npx playwright insta
 - a goal can be reached from the register, and its file opens with one more click
 - every evidence link returns 200 with the right content type
 - the screenshot dialog takes focus, steps with the arrow keys, closes on Escape, and returns focus to the thumbnail
+- the nav tracks the goal on screen and compacts after the hero; on a phone the bottom sheet keeps focus, closes on Escape, and its links jump to their sections
+- the evidence index filters by goal and announces the count
 - the hero shell answers `help`, rejects unknown commands, recalls history, lists every evidence file, and `open g3` moves both the page and keyboard focus to Goal 3
 - with reduced motion, and with JavaScript off, every figure shows its final state
 

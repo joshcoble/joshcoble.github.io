@@ -1,5 +1,9 @@
+import { useState } from 'react'
+import { AnimatePresence, m } from 'motion/react'
 import { contactPlaceholder, futureGoals, goals, profile, SITE_REPO } from '../content/goals'
+import { branchStyle } from '../lib/branches'
 import { fileMeta, fileName } from '../lib/files'
+import { EASE_OUT, useHydrated, useMotionOK } from '../lib/motion'
 import { OutLink } from './links'
 
 export function Masthead() {
@@ -87,8 +91,7 @@ export function ReadingNote() {
       <div className="prose">
         <p>
           This register records the four goals in my Professional Learning Plan for 43030 Professional Practice in
-          Computing, Assessment Task 3. Each entry shows its status, planned and delivered hours, the evidence, and what
-          changed in my thinking.
+          Computing, Assessment Task 3. Each entry shows its status, the evidence, and what changed in my thinking.
         </p>
         <p>
           Every file opens directly from its entry, and the <a href="#evidence-index">evidence index</a> lists them all in
@@ -128,14 +131,51 @@ export function FutureGoals() {
   )
 }
 
+const INDEX_ROWS = goals.flatMap((goal) =>
+  goal.evidence.flatMap((item) => (item.files ?? []).map((file) => ({ goal, file, meta: fileMeta(file.path) }))),
+)
+
+/** Every file in one table. With scripts, chips filter it by goal and the rows reflow into place. */
 export function EvidenceIndex() {
-  const rows = goals.flatMap((goal) =>
-    goal.evidence.flatMap((item) => (item.files ?? []).map((file) => ({ goal, file, meta: fileMeta(file.path) }))),
-  )
+  const hydrated = useHydrated()
+  const motionOK = useMotionOK()
+  const [filter, setFilter] = useState<string | null>(null)
+  const rows = filter ? INDEX_ROWS.filter((row) => row.goal.id === filter) : INDEX_ROWS
+  const chosen = goals.find((g) => g.id === filter)
+  const fade = motionOK ? { duration: 0.25, ease: EASE_OUT } : { duration: 0 }
+
   return (
     <section id="evidence-index" className="section" aria-labelledby="index-title">
       <h2 id="index-title">Evidence index</h2>
       <p className="section-lede">Every file on this site, one click from here.</p>
+      {hydrated && (
+        <div className="filters" role="group" aria-label="Filter files by goal">
+          <button type="button" className="chip" aria-pressed={filter === null} onClick={() => setFilter(null)}>
+            All
+            <span className="chip-count num">{INDEX_ROWS.length}</span>
+          </button>
+          {goals.map((goal) => (
+            <button
+              key={goal.id}
+              type="button"
+              className="chip"
+              style={branchStyle(goal)}
+              aria-pressed={filter === goal.id}
+              onClick={() => setFilter(goal.id)}
+            >
+              <span className="nav-swatch" aria-hidden="true" />
+              {goal.code}
+              <span className="sr-only"> {goal.short}</span>
+              <span className="chip-count num">{INDEX_ROWS.filter((row) => row.goal === goal).length}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      <p className="index-count" role="status">
+        {chosen
+          ? `${rows.length} of ${INDEX_ROWS.length} files, from ${chosen.code} ${chosen.short}`
+          : `All ${INDEX_ROWS.length} files`}
+      </p>
       <div className="table-wrap">
         <table className="data-table evidence-index">
           <thead>
@@ -147,22 +187,31 @@ export function EvidenceIndex() {
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ goal, file, meta }) => (
-              <tr key={file.path}>
-                <td>
-                  <OutLink href={meta.href} className="file-link">
-                    {fileName(file.path)}
-                  </OutLink>
-                </td>
-                <td>{file.description}</td>
-                <td className="num">
-                  <a href={`#${goal.id}`}>{goal.code}</a>
-                </td>
-                <td className="num nowrap">
-                  {meta.kind}, {meta.size}
-                </td>
-              </tr>
-            ))}
+            <AnimatePresence initial={false}>
+              {rows.map(({ goal, file, meta }) => (
+                <m.tr
+                  key={file.path}
+                  layout={motionOK ? 'position' : false}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={fade}
+                >
+                  <td>
+                    <OutLink href={meta.href} className="file-link">
+                      {fileName(file.path)}
+                    </OutLink>
+                  </td>
+                  <td>{file.description}</td>
+                  <td className="index-goal" style={branchStyle(goal)}>
+                    <a href={`#${goal.id}`}>{goal.code}</a>
+                  </td>
+                  <td className="num nowrap">
+                    {meta.kind}, {meta.size}
+                  </td>
+                </m.tr>
+              ))}
+            </AnimatePresence>
           </tbody>
         </table>
       </div>

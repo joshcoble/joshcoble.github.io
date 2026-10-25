@@ -41,7 +41,7 @@
   --t-xl: 1.75rem; /* 28 */
   --t-2xl: 2.125rem; /* 34 */
   --t-3xl: clamp(2.5rem, 4.5vw, 3.75rem);
-  --t-number: clamp(6rem, 17vw, 15rem); /* goal numbers and the hours figure */
+  --t-number: clamp(6rem, 17vw, 15rem); /* goal numbers */
   --t-poster: clamp(2.5rem, min(15.4vw, 26vh), 15.5rem); /* the hero name; JOSHUA is 5.35em wide. The vh cap keeps the intro above the fold on short screens */
 
   --lh-tight: 1.15;
@@ -65,7 +65,8 @@
   --rail: 2.75rem; /* space left of the content for main and the branch line */
   --main-x: 0.75rem; /* main, measured from the page's left edge */
   --branch-x: 1.875rem; /* a goal's branch line on narrow screens */
-  --nav-h: 3.5rem;
+  --nav-h: 3.5rem; /* the nav once compact; pinned chapters sit below it */
+  --nav-h-tall: 4.75rem; /* the nav at the top of the page */
   --radius: 3px;
 
   /* Kept so the sections not yet restyled still read correctly on dark */

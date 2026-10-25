@@ -238,69 +238,6 @@
   color: var(--branch);
 }
 
-/* ---------- Hours ---------- */
-
-.hours {
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  column-gap: var(--s-6);
-  row-gap: var(--s-3);
-  align-items: end;
-  margin-top: var(--s-2);
-}
-
-.hours-big {
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 5.5vw, 5rem);
-  font-weight: 900;
-  font-stretch: 112%;
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-  font-variant-numeric: tabular-nums;
-}
-
-.hours-big--planned {
-  color: var(--text-2);
-}
-
-.hours-big--open {
-  display: flex;
-  align-items: flex-end;
-  min-height: 0.9em;
-  font-size: clamp(3rem, 5.5vw, 5rem);
-}
-
-.hours-big--open .placeholder {
-  font-size: var(--t-md);
-  line-height: 1.6;
-  letter-spacing: 0;
-}
-
-.hours-unit {
-  margin-left: 0.08em;
-  font-family: var(--font-sans);
-  font-size: 0.3em;
-  font-weight: 400;
-  letter-spacing: 0;
-  color: var(--text-2);
-}
-
-.hours-track {
-  grid-column: 1 / -1;
-  position: relative;
-  display: block;
-  height: 6px;
-  background: var(--line);
-}
-
-.hours-fill {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  background: var(--branch);
-  transform-origin: left;
-}
-
 /* ---------- Open items: unfinished work and unfilled placeholders only ---------- */
 
 .placeholder,

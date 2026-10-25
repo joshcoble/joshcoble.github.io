@@ -7,7 +7,6 @@ import { fileMeta, fileName } from '../lib/files'
 import { EASE_OUT, useHydrated, useMotionOK } from '../lib/motion'
 import { OutLink } from './links'
 import { Pipeline } from './Pipeline'
-import { Placeholder } from './Placeholder'
 import { Thumb } from './Viewer'
 
 type ShotFile = EvidenceFile & { shot: NonNullable<EvidenceFile['shot']> }
@@ -59,62 +58,6 @@ function PinnedBranch({ goal, progress, live }: Progress & { goal: Goal }) {
       ))}
       <span className={merged ? 'pin-end pin-end--merge' : 'pin-end pin-end--open'}>
         {merged ? `merge ${branchName(goal)}` : `${branchName(goal)} open`}
-      </span>
-    </div>
-  )
-}
-
-/* ---------- Hours ---------- */
-
-/** Counts up to the delivered figure the first time it is seen. A placeholder never animates. */
-function Hours({ goal }: { goal: Goal }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const numRef = useRef<HTMLSpanElement>(null)
-  const barRef = useRef<HTMLSpanElement>(null)
-  const inView = useInView(ref, { once: true, amount: 0.6 })
-  const motionOK = useMotionOK()
-  const delivered = goal.deliveredHours
-
-  useEffect(() => {
-    if (!inView || !motionOK || delivered === null) return
-    const num = numRef.current
-    const controls = animate(0, delivered, {
-      duration: 1.2,
-      ease: EASE_OUT,
-      onUpdate: (v) => {
-        if (num) num.textContent = String(Math.round(v))
-      },
-    })
-    if (barRef.current) animate(barRef.current, { scaleX: [0, 1] }, { duration: 1.2, ease: EASE_OUT })
-    return () => controls.stop()
-  }, [inView, motionOK, delivered])
-
-  const share = delivered === null ? 0 : Math.min(delivered / goal.plannedHours, 1)
-
-  return (
-    <div ref={ref} className="hours">
-      <div className="hours-col">
-        <p className="hours-label">Delivered</p>
-        {delivered === null ? (
-          <p className="hours-big hours-big--open">
-            <Placeholder>to fill</Placeholder>
-          </p>
-        ) : (
-          <p className="hours-big">
-            <span ref={numRef}>{delivered}</span>
-            <span className="hours-unit">h</span>
-          </p>
-        )}
-      </div>
-      <div className="hours-col">
-        <p className="hours-label">Planned</p>
-        <p className="hours-big hours-big--planned">
-          {goal.plannedHours}
-          <span className="hours-unit">h</span>
-        </p>
-      </div>
-      <span className="hours-track" aria-hidden="true">
-        {delivered !== null && <span ref={barRef} className="hours-fill" style={{ width: `${share * 100}%` }} />}
       </span>
     </div>
   )
@@ -345,7 +288,6 @@ export function Chapter({ goal }: { goal: Goal }) {
             {merged ? 'merged into main' : 'open branch, not merged'}
           </span>
         </p>
-        <Hours goal={goal} />
       </div>
 
       <div className="chapter-body">

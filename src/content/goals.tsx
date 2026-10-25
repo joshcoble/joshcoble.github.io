@@ -27,8 +27,6 @@ export const goals: Goal[] = [
     title: 'Ethical practice with Indigenous communities',
     short: 'Indigenous ethics',
     status: { kind: 'complete', label: 'Complete' },
-    plannedHours: 40,
-    deliveredHours: 40,
     evidence: [
       {
         title: 'CARE Principles mapping of the Saibai Island waste management proposal',
@@ -100,8 +98,6 @@ export const goals: Goal[] = [
     title: 'Foundations in cybersecurity governance',
     short: 'Cyber governance',
     status: { kind: 'complete', label: 'Complete' },
-    plannedHours: 45,
-    deliveredHours: 45,
     evidence: [
       {
         title: 'Essential Eight Maturity Model summary',
@@ -153,8 +149,6 @@ export const goals: Goal[] = [
     title: 'Software development tools: collaborative Git and CI/CD',
     short: 'Git and CI/CD',
     status: { kind: 'complete', label: 'Complete' },
-    plannedHours: 40,
-    deliveredHours: 40,
     evidence: [
       {
         title: 'Reviewing a pull request',
@@ -311,8 +305,6 @@ export const goals: Goal[] = [
     title: 'Selecting and applying a project delivery methodology',
     short: 'Delivery methodology',
     status: { kind: 'complete', label: 'Complete' },
-    plannedHours: 50,
-    deliveredHours: 50,
     evidence: [
       {
         title: 'Scrum.org Scrum Open assessment',

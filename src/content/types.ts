@@ -58,9 +58,6 @@ export interface Goal {
   /** For tight spaces: the terminal, the nav and the graph overview. Chapters use the full title. */
   short: string
   status: Status
-  plannedHours: number
-  /** null renders as a placeholder until the figure is filled in. */
-  deliveredHours: number | null
   evidence: EvidenceItem[]
   thinking: ReactNode[]
   /** Old assumption against what replaced it, drawn from the reflection. Shown as a diff above it. */
