@@ -326,7 +326,7 @@ export const goals: Goal[] = [
           {
             path: 'evidence/scrum-open-reflection.pdf',
             description: 'Reflection note covering both Scrum Open attempts',
-            pages: 3,
+            pages: 2,
           },
         ],
       },
